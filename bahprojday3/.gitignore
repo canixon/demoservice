@@ -16,6 +16,16 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+.gradle
+.settings
+/build/
+
+/bin/
+
+.classpath
+
+.project
+
 
 ### IntelliJ IDEA ###
 .idea
