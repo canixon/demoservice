@@ -18,36 +18,35 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.bah.msd.mcc.domain.Event;
-import com.bah.msd.mcc.repository.EventRepository;
+
+
 
 @RestController
 @RequestMapping("/events")
 public class EventAPI {
 	@Autowired
-	EventRepository repo;
+	com.bah.msd.mcc.repository.EventRepository repo;
 
 	@GetMapping
 	public Iterable<Event> getAll() {
-		//  Workshop:  Implement a method to retrieve all events
 		return repo.findAll();
 	}
 
 	@GetMapping("/{eventId}")
 	public Optional<Event> getEventById(@PathVariable("eventId") long id) {
-		//  Workshop:  Implement a method to retrieve a single event by it's ID
+		// return repo.findOne(id);
 		return repo.findById(id);
 	}
 	
 	@PostMapping
 	public ResponseEntity<?> addEvent(@RequestBody Event newEvent, UriComponentsBuilder uri) {
-		//  Workshop:  Implement a method to create a new event in response to a POST message.
-		//  Think about how you ensure that the event is properly formed.
-		if(newEvent.getId() != 0 || newEvent.getCode() == null) {
+		if (newEvent.getId() != 0 || newEvent.getCode() == null || newEvent.getTitle() == null || newEvent.getDescription() == null) {
+			// Reject we'll assign the event id
 			return ResponseEntity.badRequest().build();
 		}
 		newEvent = repo.save(newEvent);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(newEvent.getId()).toUri();
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(newEvent.getId()).toUri();
 		ResponseEntity<?> response = ResponseEntity.created(location).build();
 		return response;
 	}
@@ -57,18 +56,17 @@ public class EventAPI {
 			@RequestBody Event newEvent,
 			@PathVariable("eventId") long eventId) 
 	{
-		if(newEvent.getId() != 0 || newEvent.getCode() == null) {
+		if (newEvent.getId() != eventId || newEvent.getCode() == null || newEvent.getTitle() == null || newEvent.getDescription() == null) {
 			return ResponseEntity.badRequest().build();
 		}
-		//  Workshop:  Implement a method to update an entity in response to a PUT message.
 		newEvent = repo.save(newEvent);
 		return ResponseEntity.ok().build();
 	}	
 	
 	@DeleteMapping("/{eventId}")
 	public ResponseEntity<?> deleteEventById(@PathVariable("eventId") long id) {
-		//  Workshop:  Implement a method to delete an entity. 
-		repo.deleteById(id);;
+		// repo.delete(id);
+		repo.deleteById(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}	
 	
